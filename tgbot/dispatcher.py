@@ -8,15 +8,12 @@ from telegram.ext import (
 )
 
 from dtb.settings import DEBUG
-from tgbot.handlers.broadcast_message.manage_data import CONFIRM_DECLINE_BROADCAST
-from tgbot.handlers.broadcast_message.static_text import broadcast_command
-from tgbot.handlers.onboarding.manage_data import SECRET_LEVEL_BUTTON
-
-from tgbot.handlers.utils import files, error
 from tgbot.handlers.admin import handlers as admin_handlers
-from tgbot.handlers.location import handlers as location_handlers
+from tgbot.handlers.broadcast_message.handlers import handle_incoming_message
+from tgbot.handlers.budget.handlers import budget_categories
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
-from tgbot.handlers.broadcast_message import handlers as broadcast_handlers
+from tgbot.handlers.onboarding.manage_data import ENTER_EXPENSE_BUTTON
+from tgbot.handlers.utils import error
 from tgbot.main import bot
 
 
@@ -32,40 +29,13 @@ def setup_dispatcher(dp):
     dp.add_handler(CommandHandler("stats", admin_handlers.stats))
     dp.add_handler(CommandHandler('export_users', admin_handlers.export_users))
 
-    # location
-    dp.add_handler(CommandHandler("ask_location", location_handlers.ask_for_location))
-    dp.add_handler(MessageHandler(Filters.location, location_handlers.location_handler))
-
-    # secret level
-    dp.add_handler(CallbackQueryHandler(onboarding_handlers.secret_level, pattern=f"^{SECRET_LEVEL_BUTTON}"))
-
-    # broadcast message
-    dp.add_handler(
-        MessageHandler(Filters.regex(rf'^{broadcast_command}(/s)?.*'), broadcast_handlers.broadcast_command_with_message)
-    )
-    dp.add_handler(
-        CallbackQueryHandler(broadcast_handlers.broadcast_decision_handler, pattern=f"^{CONFIRM_DECLINE_BROADCAST}")
-    )
-
-    # files
-    dp.add_handler(MessageHandler(
-        Filters.animation, files.show_file_id,
-    ))
+    dp.add_handler(CallbackQueryHandler(budget_categories, pattern=f"^{ENTER_EXPENSE_BUTTON}"))
 
     # handling errors
     dp.add_error_handler(error.send_stacktrace_to_tg_chat)
 
     # EXAMPLES FOR HANDLERS
-    # dp.add_handler(MessageHandler(Filters.text, <function_handler>))
-    # dp.add_handler(MessageHandler(
-    #     Filters.document, <function_handler>,
-    # ))
-    # dp.add_handler(CallbackQueryHandler(<function_handler>, pattern="^r\d+_\d+"))
-    # dp.add_handler(MessageHandler(
-    #     Filters.chat(chat_id=int(TELEGRAM_FILESTORAGE_ID)),
-    #     # & Filters.forwarded & (Filters.photo | Filters.video | Filters.animation),
-    #     <function_handler>,
-    # ))
+    dp.add_handler(MessageHandler(Filters.text, handle_incoming_message))
 
     return dp
 

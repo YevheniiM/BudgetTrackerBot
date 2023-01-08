@@ -11,6 +11,7 @@ from .static_text import broadcast_command, broadcast_wrong_format, broadcast_no
     message_is_sent, declined_message_broadcasting
 from users.models import User
 from users.tasks import broadcast_message
+from ..utils.info import extract_user_data_from_update
 
 
 def broadcast_command_with_message(update: Update, context: CallbackContext):
@@ -86,4 +87,13 @@ def broadcast_decision_handler(update: Update, context: CallbackContext) -> None
         chat_id=update.callback_query.message.chat_id,
         message_id=update.callback_query.message.message_id,
         entities=None if broadcast_decision == CONFIRM_BROADCAST else entities,
+    )
+
+
+def handle_incoming_message(update: Update, context: CallbackContext):
+    user_id = extract_user_data_from_update(update)['user_id']
+
+    context.bot.send_message(
+        chat_id=user_id,
+        text='I received your message, working on it!',
     )

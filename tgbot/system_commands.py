@@ -31,14 +31,6 @@ def set_up_commands(bot_instance: Bot) -> None:
             'ask_location': 'Envoyer emplacement 📍',
             'broadcast': 'Message de diffusion 📨',
             "export_users": 'Exporter users.csv 👥',
-        },
-        'ru': {
-            'start': 'Запустить django бота 🚀',
-            'stats': 'Статистика бота 📊',
-            'admin': 'Показать информацию для админов ℹ️',
-            'broadcast': 'Отправить сообщение 📨',
-            'ask_location': 'Отправить локацию 📍',
-            'export_users': 'Экспорт users.csv 👥',
         }
     }
 
