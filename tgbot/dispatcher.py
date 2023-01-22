@@ -1,6 +1,8 @@
 """
     Telegram event handlers
 """
+import json
+
 from telegram.ext import (
     Dispatcher, Filters,
     CommandHandler, MessageHandler,
@@ -9,12 +11,18 @@ from telegram.ext import (
 
 from dtb.settings import DEBUG
 from tgbot.handlers.admin import handlers as admin_handlers
-from tgbot.handlers.broadcast_message.handlers import handle_incoming_message
+from tgbot.handlers.broadcast_message.handlers import handle_incoming_message, handle_incoming_category_button
 from tgbot.handlers.budget.handlers import budget_categories
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
 from tgbot.handlers.onboarding.manage_data import ENTER_EXPENSE_BUTTON
 from tgbot.handlers.utils import error
 from tgbot.main import bot
+
+
+def match_category_callback(callback_query):
+    data = json.loads(callback_query)
+    return data.get('button_name') == 'BUTTON_CATEGORY'
+
 
 
 def setup_dispatcher(dp):
@@ -35,7 +43,9 @@ def setup_dispatcher(dp):
     dp.add_error_handler(error.send_stacktrace_to_tg_chat)
 
     # EXAMPLES FOR HANDLERS
-    dp.add_handler(MessageHandler(Filters.text, handle_incoming_message))
+    dp.add_handler(MessageHandler(Filters.all, handle_incoming_message))
+
+    dp.add_handler(CallbackQueryHandler(handle_incoming_category_button, pattern=match_category_callback))
 
     return dp
 

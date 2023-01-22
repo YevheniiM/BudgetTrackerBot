@@ -10,3 +10,11 @@ def make_keyboard_for_start_command() -> InlineKeyboardMarkup:
     ]]
 
     return InlineKeyboardMarkup(buttons)
+
+
+def make_keyboard_for_enter_expense() -> InlineKeyboardMarkup:
+    buttons = [[
+        InlineKeyboardButton('Categories', callback_data=f'{ENTER_EXPENSE_BUTTON}')
+    ]]
+
+    return InlineKeyboardMarkup(buttons)

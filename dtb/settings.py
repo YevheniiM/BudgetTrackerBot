@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     'debug_toolbar',
 
     # local apps
-    'users.apps.UsersConfig',
+    'users',
+    'budget',
+    'tgbot',
 ]
 
 MIDDLEWARE = [
@@ -180,4 +182,3 @@ TELEGRAM_LOGS_CHAT_ID = os.getenv("TELEGRAM_LOGS_CHAT_ID", default=None)
 #     # django.contrib.auth) you may enable sending PII data.
 #     send_default_pii=True
 # )
-
