@@ -3,7 +3,7 @@ import json
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from budget.handlers.categories.keyboards import make_keyboard_for_expenses_categories
+from tgbot.handlers.categories.keyboards import make_keyboard_for_expenses_categories
 from budget.models import Category, UserStatusEnum, UserStatus
 from tgbot.handlers.utils.info import extract_user_data_from_update
 from users.models import User
