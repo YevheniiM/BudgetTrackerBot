@@ -1,10 +1,7 @@
-import json
-
 import telegram
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from budget.models import UserStatusEnum, Category, Expense
 from dtb.settings import DEBUG
 from users.models import User
 from users.tasks import broadcast_message
@@ -12,8 +9,6 @@ from .keyboards import keyboard_confirm_decline_broadcasting
 from .manage_data import CONFIRM_DECLINE_BROADCAST, CONFIRM_BROADCAST
 from .static_text import broadcast_command, broadcast_wrong_format, broadcast_no_access, error_with_html, \
     message_is_sent, declined_message_broadcasting
-from ..onboarding.keyboards import make_keyboard_for_enter_expense
-from ..utils.info import extract_user_data_from_update
 
 
 def broadcast_command_with_message(update: Update, context: CallbackContext):
@@ -90,52 +85,3 @@ def broadcast_decision_handler(update: Update, context: CallbackContext) -> None
         message_id=update.callback_query.message.message_id,
         entities=None if broadcast_decision == CONFIRM_BROADCAST else entities,
     )
-
-
-def handle_incoming_category_button(update: Update, context: CallbackContext):
-    user_id = extract_user_data_from_update(update)['user_id']
-    user = User.objects.get(user_id=user_id)
-    user_status = user.status
-
-    input_category = json.loads(update.callback_query.data).get('id')
-
-    category = Category.objects.get(id=int(input_category))
-    user_status.category = category
-    user_status.status = UserStatusEnum.ENTERING_EXPENSE.value
-    user_status.save()
-
-    context.bot.send_message(
-        chat_id=user_id,
-        text='Enter an expense',
-    )
-
-
-def handle_incoming_message(update: Update, context: CallbackContext):
-    user_id = extract_user_data_from_update(update)['user_id']
-    user = User.objects.get(user_id=user_id)
-    user_status = user.status
-
-    if user_status.status == UserStatusEnum.DEFAULT:
-        context.bot.send_message(
-            chat_id=user_id,
-            text='I am not sure what do you mean...',
-        )
-    elif user_status.status == UserStatusEnum.CHOOSING_CATEGORY.value:
-        if update.message.text:
-            category = Category.objects.create(name=update.message.text)
-            category.users.add(user)
-            context.bot.send_message(
-                chat_id=user_id,
-                text=f'Created category: {category.name}',
-            )
-    elif user_status.status == UserStatusEnum.ENTERING_EXPENSE.value:
-        if update.message.text:
-            expense_value = float(update.message.text)
-            expense = Expense.objects.create(category=user_status.category,
-                                             amount=expense_value)
-            expense.users.add(user)
-            context.bot.send_message(
-                chat_id=user_id,
-                text=f'Expense entered',
-                reply_markup=make_keyboard_for_enter_expense()
-            )
