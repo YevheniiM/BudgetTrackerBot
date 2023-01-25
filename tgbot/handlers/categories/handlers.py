@@ -47,6 +47,6 @@ def budget_new_category(update: Update, context: CallbackContext) -> None:
     user_status.save()
 
     context.bot.send_message(
-        text='Type in, to add a category',
+        text='Type in, to add a category (you can type as many as you want in one message)',
         chat_id=user_id
     )

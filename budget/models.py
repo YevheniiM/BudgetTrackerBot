@@ -29,6 +29,7 @@ class UserStatusEnum(Enum):
     DEFAULT = "default"
     CHOOSING_CATEGORY = "choosing_category"
     ENTERING_EXPENSE = "entering_expense"
+    ENTERING_EXPENSE_MORE_THAN_ONE = "entering_expense_more_than_one"
     EXPENSE_ENTERED = "expense_entered"
 
 
