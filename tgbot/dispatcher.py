@@ -9,10 +9,10 @@ from telegram.ext import (
 )
 
 from tgbot.handlers.categories.patterns import match_category_callback
-from tgbot.handlers.excel.handlers import export_to_excel, open_excel
+from tgbot.handlers.excel.handlers import export_to_excel, open_excel, request_email_address
+from tgbot.handlers.excel.manage_data import GET_ACCESS_BUTTON
 from tgbot.handlers.stats.handlers import show_stats
 from dtb.settings import DEBUG
-from tgbot.handlers.admin import handlers as admin_handlers
 from tgbot.handlers.general.handlers import handle_incoming_message
 from tgbot.handlers.categories.handlers import handle_incoming_category_button, budget_categories, budget_new_category
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
@@ -33,6 +33,7 @@ def setup_dispatcher(dp):
     dp.add_handler(CallbackQueryHandler(budget_categories, pattern=f"^{CHOOSE_CATEGORY_BUTTON}"))
     dp.add_handler(CallbackQueryHandler(handle_incoming_category_button, pattern=match_category_callback))
 
+    dp.add_handler(CallbackQueryHandler(request_email_address, pattern=f"^{GET_ACCESS_BUTTON}"))
 
     # handling errors
     dp.add_error_handler(error.send_stacktrace_to_tg_chat)
@@ -42,6 +43,6 @@ def setup_dispatcher(dp):
     return dp
 
 
-set_up_commands(bot)
+# set_up_commands(bot)
 n_workers = 0 if DEBUG else 4
 dispatcher = setup_dispatcher(Dispatcher(bot, update_queue=None, workers=n_workers, use_context=True))

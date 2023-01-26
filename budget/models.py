@@ -20,6 +20,7 @@ class Expense(CreateUpdateTracker):
     users = models.ManyToManyField(User, related_name='expenses')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     note = models.TextField(null=True, blank=True)
+    date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return "{} - {}".format(self.category.name, self.amount)
@@ -31,6 +32,7 @@ class UserStatusEnum(Enum):
     ENTERING_EXPENSE = "entering_expense"
     ENTERING_EXPENSE_MORE_THAN_ONE = "entering_expense_more_than_one"
     EXPENSE_ENTERED = "expense_entered"
+    ENTERING_EMAIL = "entering_email"
 
 
 class UserStatus(CreateUpdateTracker):

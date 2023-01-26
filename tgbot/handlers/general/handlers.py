@@ -2,6 +2,7 @@ from telegram import Update
 from telegram.ext import CallbackContext
 
 from budget.models import Category, UserStatusEnum, Expense
+from excel.core.sheet_manager import SheetManager
 from tgbot.handlers.onboarding.keyboards import make_keyboard_for_enter_expense
 from tgbot.handlers.utils.categories import split_categories
 from tgbot.handlers.utils.info import extract_user_data_from_update
@@ -26,7 +27,7 @@ def handle_incoming_message(update: Update, context: CallbackContext):
     user = User.objects.get(user_id=user_id)
     user_status = user.status
 
-    if user_status.status == UserStatusEnum.DEFAULT:
+    if user_status.status == UserStatusEnum.DEFAULT.value:
         context.bot.send_message(chat_id=user_id, text='I am not sure what do you mean...')
     elif user_status.status == UserStatusEnum.CHOOSING_CATEGORY.value:
         categories = split_categories(update.message.text)
@@ -53,3 +54,12 @@ def handle_incoming_message(update: Update, context: CallbackContext):
             )
             user_status.status = UserStatusEnum.ENTERING_EXPENSE_MORE_THAN_ONE.value
             user_status.save()
+    elif user_status.status == UserStatusEnum.ENTERING_EMAIL.value:
+        if update.message.text:
+            user.email = update.message.text.strip()
+            user.save()
+        SheetManager(user).share()
+        context.bot.send_message(
+            chat_id=user_id,
+            text='Access granted, you may follow the link now'
+        )
