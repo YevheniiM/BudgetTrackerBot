@@ -3,10 +3,12 @@ import datetime
 
 from gspread import WorksheetNotFound
 
-from dtb.settings import GOOGLE_AUTH_DICT
+from django.conf  import settings
 
 
-gc = gspread.service_account_from_dict(GOOGLE_AUTH_DICT)
+from pprint import pprint
+pprint(settings.GOOGLE_AUTH_DICT)
+gc = gspread.service_account_from_dict(settings.GOOGLE_AUTH_DICT)
 
 
 class SheetManager:
