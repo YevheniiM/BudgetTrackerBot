@@ -12,11 +12,11 @@ def export_to_excel(update: Update, context: CallbackContext):
     user_id = extract_user_data_from_update(update)['user_id']
     user = User.objects.get(user_id=user_id)
 
-    populate_google_sheet_with_expenses_data(user)
-
+    populated = populate_google_sheet_with_expenses_data(user)
+    text = 'Exporting to Excel' if populated else 'No expenses found so far'
     context.bot.send_message(
         chat_id=user_id,
-        text='Exporting to Excel',
+        text=text,
         reply_markup=make_keyboard_for_open_excel(user)
     )
 

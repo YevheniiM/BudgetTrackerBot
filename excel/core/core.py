@@ -14,6 +14,8 @@ socket.setdefaulttimeout(150)
 def populate_google_sheet_with_expenses_data(user):
     # Get user's expenses queryset
     expenses_queryset = Expense.objects.filter(users=user)
+    if not expenses_queryset:
+        return False
 
     # Create a dataframe from the queryset
     df = pd.DataFrame.from_records(expenses_queryset.values())
@@ -59,9 +61,7 @@ def populate_google_sheet_with_expenses_data(user):
     worksheet.update('A1', 'Detailed expenses sorted by date')
     worksheet.update('A3', [df2.columns.values.tolist()] + df2.values.tolist())
 
-
-
-
+    return True
 
 
 def update_all_users_expenses_data():
