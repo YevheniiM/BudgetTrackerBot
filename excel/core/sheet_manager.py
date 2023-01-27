@@ -6,8 +6,6 @@ from gspread import WorksheetNotFound
 from django.conf  import settings
 
 
-from pprint import pprint
-pprint(settings.GOOGLE_AUTH_DICT)
 gc = gspread.service_account_from_dict(settings.GOOGLE_AUTH_DICT)
 
 
