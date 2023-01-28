@@ -33,7 +33,7 @@ def populate_google_sheet_with_expenses_data(user):
 
     # Pivot the dataframe to have categories as columns
     df_pivot = df.pivot_table(index='Date', columns='Category Name', values='Amount', aggfunc='sum', fill_value=0,
-                              margins=True, margins_name='All', dropna=True, sort=False).reset_index('Date')
+                              margins=True, margins_name='All', dropna=True, sort=True).reset_index('Date')
 
     # Get the worksheet
     sheet_manager = SheetManager(user)
@@ -51,13 +51,14 @@ def populate_google_sheet_with_expenses_data(user):
         elif i == len(data) - 1:
             pass
         else:
-            expenses_for_date = expenses_queryset.filter(created_at__date=row[0])
+            expenses_for_date = expenses_queryset.filter(created_at=row[0])
             row[0] = f'{str(row[0])} ({len(expenses_for_date)})'
 
     worksheet.update('H1', 'Summary for all the expenses')
     worksheet.update('H3', [data[0]] + data[1:])
 
     df2 = df[['Date', 'Category Name', 'Amount']]
+    df2 = df2.sort_values(by='Date', ascending=False)
     worksheet.update('A1', 'Detailed expenses sorted by date')
     worksheet.update('A3', [df2.columns.values.tolist()] + df2.values.tolist())
 

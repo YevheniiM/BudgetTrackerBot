@@ -1,3 +1,4 @@
+import datetime
 from enum import Enum
 
 from django.db import models
@@ -15,12 +16,17 @@ class Category(CreateUpdateTracker):
         return self.name
 
 
-class Expense(CreateUpdateTracker):
+class Expense(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     users = models.ManyToManyField(User, related_name='expenses')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     note = models.TextField(null=True, blank=True)
-    date = models.DateField(auto_now_add=True)
+    created_at = models.DateField()
+
+    def save(self, *args, **kwargs):
+        if self.created_at is None:
+            self.created_at = datetime.datetime.now()
+        super(Expense, self).save(*args, **kwargs)
 
     def __str__(self):
         return "{} - {}".format(self.category.name, self.amount)
@@ -31,6 +37,7 @@ class UserStatusEnum(Enum):
     CHOOSING_CATEGORY = "choosing_category"
     ENTERING_EXPENSE = "entering_expense"
     ENTERING_EXPENSE_MORE_THAN_ONE = "entering_expense_more_than_one"
+    BATCH_ENTERING_EXPENSE = "batch_entering_expense"
     EXPENSE_ENTERED = "expense_entered"
     ENTERING_EMAIL = "entering_email"
 

@@ -14,7 +14,8 @@ from tgbot.handlers.excel.manage_data import GET_ACCESS_BUTTON
 from tgbot.handlers.stats.handlers import show_stats
 from dtb.settings import DEBUG
 from tgbot.handlers.general.handlers import handle_incoming_message
-from tgbot.handlers.categories.handlers import handle_incoming_category_button, budget_categories, budget_new_category
+from tgbot.handlers.categories.handlers import handle_incoming_category_button, budget_categories, budget_new_category, \
+    batch_expenses
 from tgbot.handlers.onboarding import handlers as onboarding_handlers
 from tgbot.handlers.onboarding.manage_data import CHOOSE_CATEGORY_BUTTON
 from tgbot.handlers.utils import error
@@ -25,6 +26,7 @@ from tgbot.system_commands import set_up_commands
 def setup_dispatcher(dp):
     dp.add_handler(CommandHandler("start", onboarding_handlers.command_start))
     dp.add_handler(CommandHandler("enter_expense", budget_categories))
+    dp.add_handler(CommandHandler("enter_batch_expense", batch_expenses))
     dp.add_handler(CommandHandler("add_category", budget_new_category))
     dp.add_handler(CommandHandler("show_stats", show_stats))
     dp.add_handler(CommandHandler("export_to_excel", export_to_excel))

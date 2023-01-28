@@ -10,6 +10,7 @@ def set_up_commands(bot_instance: Bot) -> None:
         'en': {
             'start': 'Start django bot 🚀',
             'enter_expense': 'Enter Expense 💰',
+            'enter_batch_expense': 'Enter Batch Expenses 💰💰💰',
             'add_category': 'Add Category 📝',
             'show_stats': 'Statistics of your budget 📊',
             'export_to_excel': 'Export to Excel 📤',

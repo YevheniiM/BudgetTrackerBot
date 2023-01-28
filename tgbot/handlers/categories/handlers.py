@@ -39,6 +39,18 @@ def budget_categories(update: Update, context: CallbackContext) -> None:
         reply_markup=make_keyboard_for_expenses_categories(user_id)
     )
 
+def batch_expenses(update: Update, context: CallbackContext) -> None:
+    user_id = extract_user_data_from_update(update)['user_id']
+    user_status, _ = UserStatus.objects.get_or_create(user_id=user_id)
+    user_status.status = UserStatusEnum.BATCH_ENTERING_EXPENSE.value
+    user_status.save()
+
+    context.bot.send_message(
+        text='Enter all expenses in the following format: \n'
+             'expense, category, date(YY-mm-dd)',
+        chat_id=user_id,
+    )
+
 
 def budget_new_category(update: Update, context: CallbackContext) -> None:
     user_id = extract_user_data_from_update(update)['user_id']
