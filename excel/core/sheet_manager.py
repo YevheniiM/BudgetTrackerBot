@@ -32,10 +32,9 @@ class SheetManager:
         except WorksheetNotFound:
             return self.working_sheet.add_worksheet(title=sheet_name, rows=None, cols=None)
 
-    def create_or_get_sheet_by_month(self, date_time=None, clean=False):
-        month = date_time or datetime.datetime.now().strftime("%B")
+    def create_or_get_sheet_by_month(self, year, month, clean=False):
         name = self.user.username or self.user.first_name or self.user.user_id
-        sheet_name = f'{name} [{month}]'
+        sheet_name = f'{name} [{month} {year}]'
         sheet = self.__create_or_get_sheet_by_user(sheet_name)
         if clean:
             sheet.clear()
@@ -48,5 +47,13 @@ class SheetManager:
             self.working_sheet.share(self.user.email, perm_type='user', role='writer')
         else:
             raise Exception('Provide an email address!')
+
+
+    def delete_all_sheets(self):
+        """
+        Deletes all worksheets in the spreadsheet.
+        """
+        for sheet in self.working_sheet.worksheets()[:-1]:
+            self.working_sheet.del_worksheet(sheet)
 
 
